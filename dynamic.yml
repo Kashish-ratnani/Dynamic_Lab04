@@ -3,34 +3,49 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      # No PHP runtime, just installing necessary tools for Apache and Git
+      # Specify any runtime versions if needed (e.g., nodejs, python, etc.), if using JavaScript frameworks
+      nodejs: 14  # Only if you're using Node.js for frontend JavaScript, otherwise remove this line
     commands:
       - echo Installing dependencies...
       - sudo yum install -y httpd # Install Apache web server
       - sudo yum install -y git # Ensure git is available
       - echo Apache installation complete.
+      - echo Installing npm dependencies...
+      # If your project uses npm (e.g., for JavaScript), uncomment and modify the following:
+      - npm install
+      - echo npm install complete.
 
   pre_build:
     commands:
       - echo Pre-build phase...
       - apachectl -v # Verify Apache installation
       - git --version # Verify git installation
+      - npm --version # Verify npm installation (if using npm)
 
   build:
     commands:
       - echo Build phase...
       - sudo mkdir -p /var/www/html # Create the directory for the website
-      - sudo cp -R * /var/www/html # Copy the files (HTML, CSS, JS) into the web directory
+      - sudo cp -R * /var/www/html # Copy all the project files (HTML, CSS, JS) into the web directory
       - sudo chown -R apache:apache /var/www/html # Ensure proper file ownership
       - echo Website files (HTML, CSS, JS) are ready for deployment.
+      # If your project includes any build steps (e.g., bundling, transpiling JS, etc.), add them here
+      # For example:
+      # - npm run build
+      # - sudo cp -R dist/* /var/www/html # If using build output like in React, Angular, etc.
 
   post_build:
     commands:
       - echo Post-build phase completed.
       - echo Files copied to /var/www/html.
+      - echo Deployment complete.
 
 artifacts:
   files:
-    - '**/*' # Include all files (HTML, CSS, JS) for potential deployment
+    - '**/*' # Include all files (HTML, CSS, JS) for deployment
   discard-paths: no
+
+cache:
+  paths:
+    - 'node_modules/**/*' # Cache node_modules if using npm to speed up build time
 
