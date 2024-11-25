@@ -1,5 +1,9 @@
 version: 0.2
 
+env:
+  variables:
+    AWS_REGION: "us-west-2"  # Explicitly setting region
+
 phases:
   install:
     runtime-versions:
