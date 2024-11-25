@@ -1,0 +1,36 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      # No PHP runtime, just installing necessary tools for Apache and Git
+    commands:
+      - echo Installing dependencies...
+      - sudo yum install -y httpd # Install Apache web server
+      - sudo yum install -y git # Ensure git is available
+      - echo Apache installation complete.
+
+  pre_build:
+    commands:
+      - echo Pre-build phase...
+      - apachectl -v # Verify Apache installation
+      - git --version # Verify git installation
+
+  build:
+    commands:
+      - echo Build phase...
+      - sudo mkdir -p /var/www/html # Create the directory for the website
+      - sudo cp -R * /var/www/html # Copy the files (HTML, CSS, JS) into the web directory
+      - sudo chown -R apache:apache /var/www/html # Ensure proper file ownership
+      - echo Website files (HTML, CSS, JS) are ready for deployment.
+
+  post_build:
+    commands:
+      - echo Post-build phase completed.
+      - echo Files copied to /var/www/html.
+
+artifacts:
+  files:
+    - '**/*' # Include all files (HTML, CSS, JS) for potential deployment
+  discard-paths: no
+
